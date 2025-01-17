@@ -45,7 +45,7 @@ typedef struct PokemonData
 // Binary Tree Node (for Pokédex)
 typedef struct PokemonNode
 {
-    PokemonData *data;
+    const PokemonData *data;
     struct PokemonNode *left;
     struct PokemonNode *right;
 } PokemonNode;
@@ -66,6 +66,12 @@ OwnerNode *ownerHead = NULL;
    1) Safe Input + Utility
    ------------------------------------------------------------ */
 
+// i added
+char* duplicateString(const char* str);
+// i added
+char *readInput();
+// i added
+void clearBuffer();
 /**
  * @brief Remove leading/trailing whitespace (including '\r').
  * @param str modifiable string
@@ -383,7 +389,7 @@ void swapOwnerData(OwnerNode *a, OwnerNode *b);
  * @param newOwner pointer to newly created OwnerNode
  * Why we made it: We need a standard approach to keep the list circular.
  */
-void linkOwnerInCircularList(OwnerNode *newOwner);
+void linkOwnerInCircularList(OwnerNode ***allOwners, OwnerNode *newOwner, int *currentAmountOfOwners);
 
 /**
  * @brief Remove a specific OwnerNode from the circular list, possibly updating head.
@@ -414,7 +420,7 @@ void enterExistingPokedexMenu(void);
  * @brief Creates a new Pokedex (prompt for name, check uniqueness, choose starter).
  * Why we made it: The main entry for building a brand-new Pokedex.
  */
-void openPokedexMenu(void);
+void openPokedexMenu(OwnerNode ***allOwners, int *currentAmountOfOwners);
 
 /**
  * @brief Delete an entire Pokedex (owner) from the list.
