@@ -5,6 +5,7 @@
 #include <string.h>
 
 # define INT_BUFFER 128
+# define MAX_OWNER_NAME_LEN 20
 
 // ================================================
 // Basic struct definitions from ex6.h assumed:
@@ -18,6 +19,76 @@
 // --------------------------------------------------------------
 // 1) Safe integer reading
 // --------------------------------------------------------------
+void openPokedexMenu(OwnerNode ***allOwners, int *currentAmountOfOwners){
+    OwnerNode **temp = realloc (*allOwners, sizeof(OwnerNode) * (*currentAmountOfOwners+1));
+    if (temp == NULL) {
+        printf("Memory allocation error\n");
+        exit(1);
+    }
+    *allOwners = temp;
+
+    OwnerNode *newOwner = malloc(sizeof(OwnerNode));
+    if (newOwner == NULL) {
+        printf("Memory allocation error\n");
+        exit(1);
+    }
+    printf("Your name: ");
+    char ownerName[21];
+    scanf("%20s", ownerName);
+    newOwner->ownerName = malloc(strlen(ownerName) + 1);
+    if (newOwner->ownerName == NULL) {
+        printf("Memory allocation error\n");
+        exit(1);
+    }
+    if (*currentAmountOfOwners >= 1) {
+        for (int i = 0; i < *currentAmountOfOwners; i++) {
+            if (strcmp((*allOwners)[i]->ownerName, ownerName) == 0 ) {
+                printf("Owner '%s' already exists. Not creating a new Pokedex.\n", (*allOwners)[i]->ownerName);
+                clearBuffer();
+                return;
+            }
+        }
+    }
+    strcpy(newOwner->ownerName, ownerName);
+    newOwner->pokedexRoot = NULL;
+    linkOwnerInCircularList(allOwners, newOwner, currentAmountOfOwners);
+
+    int starterPokemonChoice;
+    printf("Choose starter\n");
+    printf("1. Bulbasaur\n"
+                 "2. Charmander\n"
+                 "3. Squirtle\n");
+    printf("Your choice: ");
+    scanf("%d", &starterPokemonChoice);
+
+    switch (starterPokemonChoice) {
+        case 1: {
+            PokemonNode *pokemonNodeP = createPokemonNode(&pokedex[0]);
+            newOwner->pokedexRoot = pokemonNodeP;
+            printf("New Pokedex created for %s with starter %s.", newOwner->ownerName, pokedex[0].name);
+            break;
+        }
+        case 2: {
+            PokemonNode *pokemonNodeP = createPokemonNode(&pokedex[3]);
+            newOwner->pokedexRoot = pokemonNodeP;
+            printf("New Pokedex created for %s with starter %s.", newOwner->ownerName, pokedex[3].name);
+            break;
+        }
+        case 3: {
+            PokemonNode *pokemonNodeP = createPokemonNode(&pokedex[6]);
+            newOwner->pokedexRoot = pokemonNodeP;
+            printf("New Pokedex created for %s with starter %s.", newOwner->ownerName, pokedex[6].name);
+            break;
+        }
+        default: {
+            printf("Invalid choice.\n");
+            clearBuffer();
+            return;
+        }
+    }
+    clearBuffer();
+}
+
 
 void trimWhitespace(char *str)
 {
@@ -227,19 +298,19 @@ void displayMenu(OwnerNode *owner)
     switch (choice)
     {
     case 1:
-        displayBFS(owner->pokedexRoot);
+        //displayBFS(owner->pokedexRoot);
         break;
     case 2:
-        preOrderTraversal(owner->pokedexRoot);
+       // preOrderTraversal(owner->pokedexRoot);
         break;
     case 3:
-        inOrderTraversal(owner->pokedexRoot);
+       // inOrderTraversal(owner->pokedexRoot);
         break;
     case 4:
-        postOrderTraversal(owner->pokedexRoot);
+       // postOrderTraversal(owner->pokedexRoot);
         break;
     case 5:
-        displayAlphabetical(owner->pokedexRoot);
+       // displayAlphabetical(owner->pokedexRoot);
         break;
     default:
         printf("Invalid choice.\n");
@@ -255,12 +326,12 @@ void enterExistingPokedexMenu()
     printf("\nExisting Pokedexes:\n");
     // you need to implement a few things here :)
 
-    printf("\nEntering %s's Pokedex...\n", cur->ownerName);
+  //  printf("\nEntering %s's Pokedex...\n", cur->ownerName);
 
     int subChoice;
     do
     {
-        printf("\n-- %s's Pokedex Menu --\n", cur->ownerName);
+   //     printf("\n-- %s's Pokedex Menu --\n", cur->ownerName);
         printf("1. Add Pokemon\n");
         printf("2. Display Pokedex\n");
         printf("3. Release Pokemon (by ID)\n");
@@ -273,19 +344,19 @@ void enterExistingPokedexMenu()
         switch (subChoice)
         {
         case 1:
-            addPokemon(cur);
+            //addPokemon(cur);
             break;
         case 2:
-            displayMenu(cur);
+           // displayMenu(cur);
             break;
         case 3:
-            freePokemon(cur);
+            //freePokemon(cur);
             break;
         case 4:
-            pokemonFight(cur);
+          //  pokemonFight(cur);
             break;
         case 5:
-            evolvePokemon(cur);
+           // evolvePokemon(cur);
             break;
         case 6:
             printf("Back to Main Menu.\n");
@@ -301,6 +372,13 @@ void enterExistingPokedexMenu()
 // --------------------------------------------------------------
 void mainMenu()
 {
+    int amountOfOwners = 0;
+    OwnerNode **allOwners = malloc(sizeof(OwnerNode));
+    if (!allOwners) {
+        printf("Memory allocation failed.\n");
+        exit(1);
+    }
+    ownerHead = *allOwners;
     int choice;
     do
     {
@@ -317,22 +395,22 @@ void mainMenu()
         switch (choice)
         {
         case 1:
-            openPokedexMenu();
+           openPokedexMenu(&allOwners, &amountOfOwners);
             break;
         case 2:
-            enterExistingPokedexMenu();
+           // enterExistingPokedexMenu();
             break;
         case 3:
-            deletePokedex();
+          //  deletePokedex();
             break;
         case 4:
-            mergePokedexMenu();
+          //  mergePokedexMenu();
             break;
         case 5:
-            sortOwners();
+          //  sortOwners();
             break;
         case 6:
-            printOwnersCircular();
+           // printOwnersCircular();
             break;
         case 7:
             printf("Goodbye!\n");
@@ -346,6 +424,82 @@ void mainMenu()
 int main()
 {
     mainMenu();
-    freeAllOwners();
+   // freeAllOwners();
     return 0;
 }
+// Function to read a dynamically allocated string input from the user
+char* readInput() {
+    char buffer[MAX_OWNER_NAME_LEN];
+    if (fgets(buffer, MAX_OWNER_NAME_LEN, stdin) == NULL) {
+        printf("Error reading input.\n");
+        exit(1);
+    }
+    buffer[strcspn(buffer, "\n")] = '\0'; // Remove newline character
+    char *input = malloc(strlen(buffer) + 1);
+    if (!input) {
+        printf("Memory allocation error\n");
+        exit(1);
+    }
+    strcpy(input, buffer);
+    return input;
+}
+
+char* duplicateString(const char *src) {
+    if (!src) return NULL;
+    char *copy = malloc(strlen(src) + 1);
+    if (!copy) return NULL;
+    strcpy(copy, src);
+    return copy;
+}
+
+void clearBuffer() {
+    scanf("%*[^\n]");
+    scanf("%*c");
+}
+
+void linkOwnerInCircularList(OwnerNode ***allOwners, OwnerNode *newOwner, int *currentAmountOfOwners) {
+    OwnerNode **temp = realloc(*allOwners, (*currentAmountOfOwners + 1) * sizeof(OwnerNode *));
+    if (temp == NULL) {
+        printf("Memory allocation failed.\n");
+        exit(1);
+    }
+    *allOwners = temp;
+
+    if (*currentAmountOfOwners == 0) {
+        newOwner->next = newOwner;
+        newOwner->prev = newOwner;
+    }
+    else {
+        (*allOwners)[*currentAmountOfOwners - 1]->next = newOwner;
+        (newOwner)->prev = (*allOwners)[*currentAmountOfOwners - 1];
+        newOwner->next = (*allOwners)[0];
+        (*allOwners)[0]->prev = newOwner;
+
+    }
+    (*allOwners)[*currentAmountOfOwners] = newOwner;
+    (*currentAmountOfOwners)++;
+
+    PokemonNode *newPokemon = malloc(sizeof(PokemonNode));
+    if (newPokemon == NULL) {
+        printf("Memory allocation error\n");
+        exit(1);
+    }
+
+    newOwner->pokedexRoot = newPokemon;
+    newPokemon->left = NULL;
+    newPokemon->right = NULL;
+}
+PokemonNode *createPokemonNode(const PokemonData *data) {
+    PokemonNode *pokemonNodeP = malloc(sizeof(PokemonNode));
+    if (!pokemonNodeP) {
+        printf("Memory allocation failed.\n");
+        exit(1);
+    }
+    pokemonNodeP->data = data;
+    pokemonNodeP-> left = NULL;
+    pokemonNodeP->right = NULL;
+
+    return pokemonNodeP;
+}
+
+
