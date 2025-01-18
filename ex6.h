@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#define POKEDEX_SIZE 151
 
 typedef enum
 {
@@ -72,6 +72,7 @@ char* duplicateString(const char* str);
 char *readInput();
 // i added
 void clearBuffer();
+
 /**
  * @brief Remove leading/trailing whitespace (including '\r').
  * @param str modifiable string
@@ -251,6 +252,9 @@ typedef struct
     int capacity;
 } NodeArray;
 
+
+//get size of BFS tree
+int sizeOfBFSTree(PokemonNode *root);
 /**
  * @brief Initialize a NodeArray with given capacity.
  * @param na pointer to NodeArray
@@ -289,14 +293,14 @@ int compareByNameNode(const void *a, const void *b);
  * @param root BST root
  * Why we made it: Provide user the option to see Pokemon sorted by name.
  */
-void displayAlphabetical(PokemonNode *root);
+void displayAlphabetical(NodeArray* na);
 
 /**
  * @brief BFS user-friendly display (level-order).
  * @param root BST root
  * Why we made it: Quick listing in BFS order.
  */
-void displayBFS(PokemonNode *root);
+void printBFSLevelOrder(PokemonNode *root);
 
 /**
  * @brief Pre-order user-friendly display (Root->Left->Right).
@@ -328,28 +332,32 @@ void postOrderTraversal(PokemonNode *root);
  * @param owner pointer to the Owner
  * Why we made it: Fun demonstration of BFS and custom formula for battles.
  */
-void pokemonFight(OwnerNode *owner);
+void pokemonFight(OwnerNode *owner, int IDOne, int IDTwo);
+// helper function to see if the pokemon is in the pokedex
+int isPokemon(PokemonNode* root, OwnerNode* owner, int id);
 
 /**
  * @brief Evolve a Pokemon (ID -> ID+1) if allowed.
  * @param owner pointer to the Owner
  * Why we made it: Demonstrates removing an old ID, inserting the next ID.
  */
-void evolvePokemon(OwnerNode *owner);
-
+void evolvePokemon(OwnerNode *owner, int idToEvolve);
 /**
  * @brief Prompt for an ID, BFS-check duplicates, then insert into BST.
  * @param owner pointer to the Owner
  * Why we made it: Primary user function for adding new Pokemon to an owner’s Pokedex.
  */
-void addPokemon(OwnerNode *owner);
+PokemonNode* addPokemon(PokemonNode* root, OwnerNode* owner, int id, int* added);
 
 /**
  * @brief Prompt for ID, remove that Pokemon from BST by ID.
  * @param owner pointer to the Owner
  * Why we made it: Another user function for releasing a Pokemon.
  */
-void freePokemon(OwnerNode *owner);
+// code to get min in BFS to help remove Node with two children
+PokemonNode* findMinimum(PokemonNode* root);
+PokemonNode* freePokemon(PokemonNode* root, int choice);
+
 
 /* ------------------------------------------------------------
    7) Display Menu for a Pokedex
@@ -360,7 +368,7 @@ void freePokemon(OwnerNode *owner);
  * @param owner pointer to Owner
  * Why we made it: We want a simple menu that picks from various traversals.
  */
-void displayMenu(OwnerNode *owner);
+void displayPokedexOptions(OwnerNode *owner);
 
 /* ------------------------------------------------------------
    8) Sorting Owners (Bubble Sort on Circular List)
@@ -414,7 +422,7 @@ OwnerNode *findOwnerByName(const char *name);
  * @brief Let user pick an existing Pokedex (owner) by number, then sub-menu.
  * Why we made it: This is the main interface for adding/fighting/evolving, etc.
  */
-void enterExistingPokedexMenu(void);
+void enterExistingPokedexMenu(OwnerNode*** allOwners, const int *currentAmountOfOwners);
 
 /**
  * @brief Creates a new Pokedex (prompt for name, check uniqueness, choose starter).
