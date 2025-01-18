@@ -1,3 +1,9 @@
+/******************
+Name: Dan Sonnenblick
+ID: 345287882
+Assignment: ex6
+*******************/
+
 #include "ex6.h"
 #include <ctype.h>
 #include <stdio.h>
