@@ -528,12 +528,13 @@ void mainMenu()
     } while (choice != 7);
 }
 
-void freeAllOwners(OwnerNode*** allOwners, const int *amountOfOwners) {
-    if (ownerHead == NULL || *amountOfOwners == 0) {
+void freeAllOwners(OwnerNode** allOwners, const int *amountOfOwners) {
+    if (allOwners == NULL || *allOwners == NULL || *amountOfOwners == 0) {
+        free(*allOwners);
         return;
     }
     for (int i = 0; i < *amountOfOwners; i++) {
-        OwnerNode* currentOwner = (*allOwners)[i];
+        OwnerNode* currentOwner = (allOwners)[i];
 
         if (currentOwner->pokedexRoot != NULL) {
             freePokemonTree(currentOwner->pokedexRoot);
@@ -541,6 +542,7 @@ void freeAllOwners(OwnerNode*** allOwners, const int *amountOfOwners) {
         // Free the owner's name
         if (currentOwner->ownerName != NULL) {
             free(currentOwner->ownerName);
+            currentOwner->ownerName = NULL;
         }
         free(currentOwner);
     }
