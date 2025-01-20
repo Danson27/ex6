@@ -506,7 +506,7 @@ void mainMenu()
                 break;
             }
             qsort(allOwners, amountOfOwners, sizeof(OwnerNode*), compareOwnersByName);
-            updateCircularListAfterSort(allOwners, *amountOfOwners);
+            updateCircularListAfterSort(allOwners, amountOfOwners);
 
             printf("Owners sorted by name.\n");
             break;
