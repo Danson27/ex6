@@ -439,7 +439,7 @@ void mainMenu()
         printf("Memory allocation failed.\n");
         exit(1);
     }
-    ownerHead = *allOwners;
+    //ownerHead = *allOwners;
     int choice;
     do
     {
