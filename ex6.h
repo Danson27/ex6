@@ -424,7 +424,8 @@ OwnerNode *findOwnerByName(const char *name);
  * @brief Let user pick an existing Pokedex (owner) by number, then sub-menu.
  * Why we made it: This is the main interface for adding/fighting/evolving, etc.
  */
-void enterExistingPokedexMenu(OwnerNode*** allOwners, const int *currentAmountOfOwners);
+void chooseOwnerForPokedexMenu(OwnerNode*** allOwners, const int *currentAmountOfOwners);
+void enterPokedexMenu(OwnerNode *currentOwner);
 
 /**
  * @brief Creates a new Pokedex (prompt for name, check uniqueness, choose starter).
