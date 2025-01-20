@@ -519,7 +519,7 @@ void mainMenu()
             break;
         case 7:
             //Cleanup All Owners at Program End
-              freeAllOwners(&allOwners, &amountOfOwners);
+              freeAllOwners(allOwners, &amountOfOwners);
             printf("Goodbye!\n");
             break;
         default:
@@ -530,7 +530,6 @@ void mainMenu()
 
 void freeAllOwners(OwnerNode** allOwners, const int *amountOfOwners) {
     if (allOwners == NULL || *allOwners == NULL || *amountOfOwners == 0) {
-        free(*allOwners);
         return;
     }
     for (int i = 0; i < *amountOfOwners; i++) {
