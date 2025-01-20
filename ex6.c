@@ -65,19 +65,19 @@ void openPokedexMenu(OwnerNode ***allOwners, int *currentAmountOfOwners){
         case 1: {
             PokemonNode *pokemonNodeP = createPokemonNode(&pokedex[0]);
             newOwner->pokedexRoot = pokemonNodeP;
-            printf("New Pokedex created for %s with starter %s.", newOwner->ownerName, pokedex[0].name);
+            printf("New Pokedex created for %s with starter %s.\n", newOwner->ownerName, pokedex[0].name);
             break;
         }
         case 2: {
             PokemonNode *pokemonNodeP = createPokemonNode(&pokedex[3]);
             newOwner->pokedexRoot = pokemonNodeP;
-            printf("New Pokedex created for %s with starter %s.", newOwner->ownerName, pokedex[3].name);
+            printf("New Pokedex created for %s with starter %s.\n", newOwner->ownerName, pokedex[3].name);
             break;
         }
         case 3: {
             PokemonNode *pokemonNodeP = createPokemonNode(&pokedex[6]);
             newOwner->pokedexRoot = pokemonNodeP;
-            printf("New Pokedex created for %s with starter %s.", newOwner->ownerName, pokedex[6].name);
+            printf("New Pokedex created for %s with starter %s.\n", newOwner->ownerName, pokedex[6].name);
             break;
         }
         default: {
@@ -432,6 +432,7 @@ void enterPokedexMenu(OwnerNode *currentOwner){
 // --------------------------------------------------------------
 void mainMenu()
 {
+
     int amountOfOwners = 0;
     OwnerNode **allOwners = malloc(sizeof(OwnerNode));
     if (!allOwners) {
@@ -677,10 +678,9 @@ void removeOwner(OwnerNode ***allOwners, OwnerNode *toDelete, int ownerToRemove,
         }
         *allOwners = temp;
 
-        for (int i = ownerToRemove - 1; i < (*currentAmountOfOwners); i++) {
+        for (int i = ownerToRemove - 1; i < (*currentAmountOfOwners)-1; i++) {
             (*allOwners)[i] = (*allOwners)[i + 1];
         }
-
 
 }
 
