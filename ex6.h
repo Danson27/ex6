@@ -74,6 +74,7 @@ char *readInput();
 void clearBuffer();
 void addPokemonForMerge(PokemonNode *rootTwo, OwnerNode *ownerOne);
 int compareOwnersByName(const void *a, const void *b);
+void updateCircularListAfterSort(OwnerNode **allOwners, int amountOfOwners);
 
 /**
  * @brief Remove leading/trailing whitespace (including '\r').
