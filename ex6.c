@@ -620,7 +620,6 @@ void clearBuffer() {
 }
 
 void deletePokedex(OwnerNode ***allOwners, int *currentAmountOfOwners) {
-    OwnerNode *toDelete = NULL;
     if (*currentAmountOfOwners == 0) {
         printf("No existing Pokedexes to delete.\n");
         return;
@@ -630,6 +629,8 @@ void deletePokedex(OwnerNode ***allOwners, int *currentAmountOfOwners) {
         printf("%d. %s\n", i + 1, (*allOwners)[i]->ownerName);
     }
     int choiceOfPokedex = readIntSafe("Choose a Pokedex to delete by number: ");
+
+    OwnerNode* toDelete = NULL;
     if (choiceOfPokedex <= 0) {
         toDelete = (*allOwners)[0];
     } else if (choiceOfPokedex >= *currentAmountOfOwners) {
@@ -637,7 +638,10 @@ void deletePokedex(OwnerNode ***allOwners, int *currentAmountOfOwners) {
     } else {
         toDelete = (*allOwners)[choiceOfPokedex - 1];
     }
+
     printf("Deleting %s's entire Pokedex...\n", toDelete->ownerName);
+
+    // Free resources and remove owner
     freePokemonTree(toDelete->pokedexRoot);
     removeOwner(allOwners, toDelete, choiceOfPokedex, currentAmountOfOwners);
 
@@ -645,11 +649,12 @@ void deletePokedex(OwnerNode ***allOwners, int *currentAmountOfOwners) {
 
 }
 void removeOwner(OwnerNode ***allOwners, OwnerNode *toDelete, int ownerToRemove, int *currentAmountOfOwners) {
-    if (toDelete == NULL || ownerHead == NULL) {
+    if (toDelete == NULL || ownerHead == NULL || *allOwners == NULL || *currentAmountOfOwners <= 0) {
         return;
     }
 
     if (toDelete == ownerHead) {
+        //Single Owner
         if (toDelete->next == toDelete) {
             ownerHead = NULL;
         } else {
@@ -664,10 +669,17 @@ void removeOwner(OwnerNode ***allOwners, OwnerNode *toDelete, int ownerToRemove,
         toDelete->next->prev = toDelete->prev;
     }
 
+    //free the owner's memory
     freeOwnerNode(toDelete);
+
+    //shift the array of owners
+    for (int i = ownerToRemove - 1; i < (*currentAmountOfOwners)-1; i++) {
+        (*allOwners)[i] = (*allOwners)[i + 1];
+    }
 
     (*currentAmountOfOwners)--;
     if (*currentAmountOfOwners == 0) {
+        free(*allOwners);
         *allOwners = NULL;
         return;
     }
@@ -678,15 +690,14 @@ void removeOwner(OwnerNode ***allOwners, OwnerNode *toDelete, int ownerToRemove,
         }
         *allOwners = temp;
 
-        for (int i = ownerToRemove - 1; i < (*currentAmountOfOwners)-1; i++) {
-            (*allOwners)[i] = (*allOwners)[i + 1];
-        }
+
 
 }
 
 void freeOwnerNode(OwnerNode *toDelete) {
     if (toDelete != NULL) {
         free(toDelete->ownerName);
+        toDelete->ownerName=NULL;
         free(toDelete);
     }
 }
@@ -698,6 +709,7 @@ void freePokemonTree(PokemonNode *root) {
     // Recursively free the left and right subtrees
     freePokemonTree(root->left);
     freePokemonTree(root->right);
+    
     // Free the current node itself
     free (root);
 }
