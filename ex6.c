@@ -349,10 +349,10 @@ void chooseOwnerForPokedexMenu(OwnerNode*** allOwners, const int *currentAmountO
     }
     //  clearBuffer();
     printf("\nEntering %s's Pokedex...\n", currentOwner->ownerName);
-    enterPokedexMenu(currentOwner);
+    enterPokedexMenu(*allOwners, currentOwner, *currentAmountOfOwners);
 }
 
-void enterPokedexMenu(OwnerNode *currentOwner){
+void enterPokedexMenu(OwnerNode** allOwners, OwnerNode *currentOwner, int currentAmountOfOwners){
 
     int subChoice;
     do
@@ -419,10 +419,10 @@ void enterPokedexMenu(OwnerNode *currentOwner){
             break;
         case 6:
             printf("Back to Main Menu.\n");
-            return;
+            mainMenu(allOwners, &currentAmountOfOwners);
         default:
             printf("Invalid choice.\n");
-            enterPokedexMenu(currentOwner);
+            enterPokedexMenu(allOwners, currentOwner, currentAmountOfOwners);
         }
     } while (subChoice != 6);
 }
@@ -430,16 +430,8 @@ void enterPokedexMenu(OwnerNode *currentOwner){
 // --------------------------------------------------------------
 // Main Menu
 // --------------------------------------------------------------
-void mainMenu()
+void mainMenu(OwnerNode** allOwners, int* amountOfOwners)
 {
-
-    int amountOfOwners = 0;
-    OwnerNode **allOwners = malloc(sizeof(OwnerNode));
-    if (!allOwners) {
-        printf("Memory allocation failed.\n");
-        exit(1);
-    }
-    ownerHead = allOwners[0];
     int choice;
     do
     {
@@ -456,22 +448,22 @@ void mainMenu()
         switch (choice)
         {
         case 1:
-           openPokedexMenu(&allOwners, &amountOfOwners);
+           openPokedexMenu(&allOwners, amountOfOwners);
             break;
         case 2:
             if (amountOfOwners == 0) {
                 printf("No existing Pokedexes.\n");
                 break;
             }
-           chooseOwnerForPokedexMenu(&allOwners, &amountOfOwners);
+           chooseOwnerForPokedexMenu(&allOwners, amountOfOwners);
             break;
         case 3:
-            deletePokedex(&allOwners, &amountOfOwners);
+            deletePokedex(&allOwners, amountOfOwners);
             break;
         case 4:
             OwnerNode *ownerOne = NULL;
             OwnerNode *ownerTwo = NULL;
-            if (amountOfOwners < 2) {
+            if (*amountOfOwners < 2) {
                 printf("Not enough owners to merge.\n");
                 break;
             }
@@ -488,7 +480,7 @@ void mainMenu()
                 exit(1);
             }
             int index;
-            for (int i = 0; i < amountOfOwners; i++) {
+            for (int i = 0; i < *amountOfOwners; i++) {
                 if (strcmp(ownerNameOne, allOwners[i]->ownerName) == 0) {
                     ownerOne = allOwners[i];
                 }
@@ -498,15 +490,15 @@ void mainMenu()
                 }
             }
             printf("=== Merge Pokedexes ===\n");
-            mergePokedexMenu(&allOwners, ownerOne, ownerTwo, &amountOfOwners, index);
+            mergePokedexMenu(&allOwners, ownerOne, ownerTwo, amountOfOwners, index);
             break;
         case 5:
-            if (amountOfOwners < 2) {
+            if (*amountOfOwners < 2) {
                 printf("0 or 1 owners only => no need to sort.\n");
                 break;
             }
-            qsort(allOwners, amountOfOwners, sizeof(OwnerNode*), compareOwnersByName);
-            updateCircularListAfterSort(allOwners, amountOfOwners);
+            qsort(allOwners, *amountOfOwners, sizeof(OwnerNode*), compareOwnersByName);
+            updateCircularListAfterSort(allOwners, *amountOfOwners);
             printf("Owners sorted by name.\n");
             break;
         case 6:
@@ -518,7 +510,7 @@ void mainMenu()
             break;
         case 7:
             //Cleanup All Owners at Program End
-              freeAllOwners(&allOwners, &amountOfOwners);
+              freeAllOwners(&allOwners, *amountOfOwners);
             printf("Goodbye!\n");
             break;
         default:
@@ -527,11 +519,11 @@ void mainMenu()
     } while (choice != 7);
 }
 
-void freeAllOwners(OwnerNode*** allOwners, int *amountOfOwners) {
-    if (ownerHead == NULL || *amountOfOwners == 0) {
+void freeAllOwners(OwnerNode*** allOwners, int amountOfOwners) {
+    if (ownerHead == NULL || amountOfOwners == 0) {
         return;
     }
-    for (int i = 0; i < *amountOfOwners; i++) {
+    for (int i = 0; i < amountOfOwners; i++) {
         OwnerNode* currentOwner = (*allOwners)[i];
 
         if (currentOwner->pokedexRoot != NULL) {
@@ -620,7 +612,14 @@ void addPokemonForMerge(PokemonNode *rootTwo, OwnerNode *ownerOne) {
 
 int main()
 {
-    mainMenu();
+    int amountOfOwners = 0;
+    OwnerNode **allOwners = malloc(sizeof(OwnerNode));
+    if (!allOwners) {
+        printf("Memory allocation failed.\n");
+        exit(1);
+    }
+    ownerHead = allOwners[0];
+    mainMenu(allOwners, &amountOfOwners);
    // freeAllOwners();
     return 0;
 }
