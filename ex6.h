@@ -462,7 +462,7 @@ void printOwnersCircular();
  * @brief Frees every remaining owner in the circular list, setting ownerHead = NULL.
  * Why we made it: Ensures a squeaky-clean exit with no leftover memory.
  */
-void freeAllOwners(OwnerNode*** allOwners, const int *amountOfOwners);
+void freeAllOwners(OwnerNode** allOwners, const int *amountOfOwners);
 /* ------------------------------------------------------------
    13) The Main Menu
    ------------------------------------------------------------ */
