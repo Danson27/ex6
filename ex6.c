@@ -517,7 +517,7 @@ void mainMenu()
             break;
         case 7:
             //Cleanup All Owners at Program End
-              //  freeAllOwners(&allOwners, &amountOfOwners);
+              freeAllOwners(&allOwners, &amountOfOwners);
             printf("Goodbye!\n");
             break;
         default:
