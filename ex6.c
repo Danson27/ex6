@@ -420,6 +420,7 @@ void enterPokedexMenu(OwnerNode** allOwners, OwnerNode *currentOwner, int curren
         case 6:
             printf("Back to Main Menu.\n");
             mainMenu(allOwners, &currentAmountOfOwners);
+            break;
         default:
             printf("Invalid choice.\n");
             enterPokedexMenu(allOwners, currentOwner, currentAmountOfOwners);
@@ -618,9 +619,10 @@ int main()
         printf("Memory allocation failed.\n");
         exit(1);
     }
-    ownerHead = allOwners[0];
+
+    *allOwners = NULL; // Initialize first pointer to NULL
     mainMenu(allOwners, &amountOfOwners);
-   // freeAllOwners();
+    free(allOwners);
     return 0;
 }
 
