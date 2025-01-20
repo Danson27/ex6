@@ -426,8 +426,7 @@ OwnerNode *findOwnerByName(const char *name);
  * Why we made it: This is the main interface for adding/fighting/evolving, etc.
  */
 void chooseOwnerForPokedexMenu(OwnerNode*** allOwners, const int *currentAmountOfOwners);
-void enterPokedexMenu(OwnerNode *currentOwner);
-
+void enterPokedexMenu(OwnerNode** allOwners, OwnerNode *currentOwner, int currentAmountOfOwners);
 /**
  * @brief Creates a new Pokedex (prompt for name, check uniqueness, choose starter).
  * Why we made it: The main entry for building a brand-new Pokedex.
@@ -462,7 +461,7 @@ void printOwnersCircular();
  * @brief Frees every remaining owner in the circular list, setting ownerHead = NULL.
  * Why we made it: Ensures a squeaky-clean exit with no leftover memory.
  */
-void freeAllOwners(OwnerNode*** allOwners, int *amountOfOwners);
+void freeAllOwners(OwnerNode*** allOwners, int amountOfOwners);
 /* ------------------------------------------------------------
    13) The Main Menu
    ------------------------------------------------------------ */
@@ -471,7 +470,8 @@ void freeAllOwners(OwnerNode*** allOwners, int *amountOfOwners);
  * @brief The main driver loop for the program (new pokedex, merge, fight, etc.).
  * Why we made it: Our top-level UI that keeps the user engaged until they exit.
  */
-void mainMenu(void);
+void mainMenu(OwnerNode** allOwners, int* amountOfOwners);
+
 
 // Array of Pokemon data
 static const PokemonData pokedex[] = {
