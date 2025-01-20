@@ -490,10 +490,18 @@ void mainMenu()
             mergePokedexMenu(&allOwners, ownerOne, ownerTwo, &amountOfOwners, index);
             break;
         case 5:
+            if (amountOfOwners < 2) {
+                printf("Your choice: 0 or 1 owners only => no need to sort.\n");
+                break;
+            }
             qsort(allOwners, amountOfOwners, sizeof(OwnerNode*), compareOwnersByName);
             printf("Owners sorted by name.\n");
             break;
         case 6:
+            if (amountOfOwners == 0) {
+                printf("No owners.\n");
+                break;
+            }
             printOwnersCircular(amountOfOwners);
             break;
         case 7:
