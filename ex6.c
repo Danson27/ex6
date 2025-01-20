@@ -381,24 +381,31 @@ void enterPokedexMenu(OwnerNode *currentOwner){
             displayPokedexOptions(currentOwner);
             break;
         case 3:
+            if (currentOwner->pokedexRoot == NULL) {
+                printf("No Pokemon to release.\n");
+                break;
+            }
             int choice = readIntSafe("Enter Pokemon ID to release:");
             if (!isPokemon(currentOwner->pokedexRoot, currentOwner, choice)) {
                 printf("No Pokemon with ID %d found.\n", choice);
                 break;
             }
-
             currentOwner->pokedexRoot = freePokemonNode(currentOwner->pokedexRoot, choice);
             break;
         case 4:
             if (currentOwner->pokedexRoot == NULL) {
                 printf("Pokedex is empty.\n");
-                return;
+                break;
             }
             int IDOne = readIntSafe("Enter ID of the first Pokemon: ");
             int IDTwo = readIntSafe("Enter ID of the second Pokemon: ");
             pokemonFight(currentOwner, IDOne, IDTwo);
             break;
         case 5:
+            if (currentOwner->pokedexRoot == NULL) {
+                printf("Cannot evolve. Pokedex empty.\n");
+                break;
+            }
             int idToEvolve = readIntSafe("Enter ID to evolve: ");
             if (!isPokemon(currentOwner->pokedexRoot, currentOwner, idToEvolve)) {
                 printf("No Pokemon with ID %d found.\n", idToEvolve);
