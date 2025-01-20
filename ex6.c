@@ -350,7 +350,7 @@ void enterExistingPokedexMenu(OwnerNode*** allOwners, const int *currentAmountOf
     else {
         currentOwner = (*allOwners)[choiceOfPokedex-1];
     }
-    clearBuffer();
+   // clearBuffer();
   printf("\nEntering %s's Pokedex...\n", currentOwner->ownerName);
 
     int subChoice;
