@@ -349,10 +349,10 @@ void chooseOwnerForPokedexMenu(OwnerNode*** allOwners, const int *currentAmountO
     }
     //  clearBuffer();
     printf("\nEntering %s's Pokedex...\n", currentOwner->ownerName);
-    enterPokedexMenu(*allOwners, currentOwner, *currentAmountOfOwners);
+    enterPokedexMenu(currentOwner);
 }
 
-void enterPokedexMenu(OwnerNode** allOwners, OwnerNode *currentOwner, int currentAmountOfOwners){
+void enterPokedexMenu(OwnerNode *currentOwner){
 
     int subChoice;
     do
@@ -419,11 +419,10 @@ void enterPokedexMenu(OwnerNode** allOwners, OwnerNode *currentOwner, int curren
             break;
         case 6:
             printf("Back to Main Menu.\n");
-            mainMenu(allOwners, &currentAmountOfOwners);
-            break;
+            return;
         default:
             printf("Invalid choice.\n");
-            enterPokedexMenu(allOwners, currentOwner, currentAmountOfOwners);
+            enterPokedexMenu(currentOwner);
         }
     } while (subChoice != 6);
 }
@@ -431,8 +430,16 @@ void enterPokedexMenu(OwnerNode** allOwners, OwnerNode *currentOwner, int curren
 // --------------------------------------------------------------
 // Main Menu
 // --------------------------------------------------------------
-void mainMenu(OwnerNode** allOwners, int* amountOfOwners)
+void mainMenu()
 {
+
+    int amountOfOwners = 0;
+    OwnerNode **allOwners = malloc(sizeof(OwnerNode));
+    if (!allOwners) {
+        printf("Memory allocation failed.\n");
+        exit(1);
+    }
+    //ownerHead = *allOwners;
     int choice;
     do
     {
@@ -449,22 +456,22 @@ void mainMenu(OwnerNode** allOwners, int* amountOfOwners)
         switch (choice)
         {
         case 1:
-           openPokedexMenu(&allOwners, amountOfOwners);
+           openPokedexMenu(&allOwners, &amountOfOwners);
             break;
         case 2:
             if (amountOfOwners == 0) {
                 printf("No existing Pokedexes.\n");
                 break;
             }
-           chooseOwnerForPokedexMenu(&allOwners, amountOfOwners);
+           chooseOwnerForPokedexMenu(&allOwners, &amountOfOwners);
             break;
         case 3:
-            deletePokedex(&allOwners, amountOfOwners);
+            deletePokedex(&allOwners, &amountOfOwners);
             break;
         case 4:
             OwnerNode *ownerOne = NULL;
             OwnerNode *ownerTwo = NULL;
-            if (*amountOfOwners < 2) {
+            if (amountOfOwners < 2) {
                 printf("Not enough owners to merge.\n");
                 break;
             }
@@ -481,7 +488,7 @@ void mainMenu(OwnerNode** allOwners, int* amountOfOwners)
                 exit(1);
             }
             int index;
-            for (int i = 0; i < *amountOfOwners; i++) {
+            for (int i = 0; i < amountOfOwners; i++) {
                 if (strcmp(ownerNameOne, allOwners[i]->ownerName) == 0) {
                     ownerOne = allOwners[i];
                 }
@@ -491,15 +498,16 @@ void mainMenu(OwnerNode** allOwners, int* amountOfOwners)
                 }
             }
             printf("=== Merge Pokedexes ===\n");
-            mergePokedexMenu(&allOwners, ownerOne, ownerTwo, amountOfOwners, index);
+            mergePokedexMenu(&allOwners, ownerOne, ownerTwo, &amountOfOwners, index);
             break;
         case 5:
-            if (*amountOfOwners < 2) {
+            if (amountOfOwners < 2) {
                 printf("0 or 1 owners only => no need to sort.\n");
                 break;
             }
-            qsort(allOwners, *amountOfOwners, sizeof(OwnerNode*), compareOwnersByName);
+            qsort(allOwners, amountOfOwners, sizeof(OwnerNode*), compareOwnersByName);
             updateCircularListAfterSort(allOwners, *amountOfOwners);
+
             printf("Owners sorted by name.\n");
             break;
         case 6:
@@ -511,7 +519,7 @@ void mainMenu(OwnerNode** allOwners, int* amountOfOwners)
             break;
         case 7:
             //Cleanup All Owners at Program End
-              freeAllOwners(&allOwners, *amountOfOwners);
+              freeAllOwners(&allOwners, &amountOfOwners);
             printf("Goodbye!\n");
             break;
         default:
@@ -520,11 +528,11 @@ void mainMenu(OwnerNode** allOwners, int* amountOfOwners)
     } while (choice != 7);
 }
 
-void freeAllOwners(OwnerNode*** allOwners, int amountOfOwners) {
-    if (ownerHead == NULL || amountOfOwners == 0) {
+void freeAllOwners(OwnerNode*** allOwners, const int *amountOfOwners) {
+    if (ownerHead == NULL || *amountOfOwners == 0) {
         return;
     }
-    for (int i = 0; i < amountOfOwners; i++) {
+    for (int i = 0; i < *amountOfOwners; i++) {
         OwnerNode* currentOwner = (*allOwners)[i];
 
         if (currentOwner->pokedexRoot != NULL) {
@@ -542,6 +550,23 @@ void freeAllOwners(OwnerNode*** allOwners, int amountOfOwners) {
     *allOwners = NULL;
 
     ownerHead = NULL;
+}
+void updateCircularListAfterSort(OwnerNode **allOwners, int amountOfOwners) {
+    if (amountOfOwners == 0) {
+        ownerHead = NULL;
+        return;
+    }
+
+
+    // Update the circular linked list
+    for (int i = 0; i < amountOfOwners; i++) {
+        allOwners[i]->next = allOwners[(i + 1) % amountOfOwners];
+        allOwners[i]->prev = allOwners[(i - 1 + amountOfOwners) % amountOfOwners];
+    }
+
+
+    // Update the head of the circular linked list
+    ownerHead = allOwners[0];
 }
 
 void printOwnersCircular() {
@@ -569,21 +594,6 @@ int compareOwnersByName(const void *a, const void *b) {
     const OwnerNode *one = *(const OwnerNode**)a;
     const OwnerNode *two = *(const OwnerNode**)b;
     return strcmp(one->ownerName, two->ownerName);
-}
-void updateCircularListAfterSort(OwnerNode **allOwners, int amountOfOwners) {
-    if (amountOfOwners == 0) {
-        ownerHead = NULL;
-        return;
-    }
-
-    // Update the circular linked list
-    for (int i = 0; i < amountOfOwners; i++) {
-        allOwners[i]->next = allOwners[(i + 1) % amountOfOwners];
-        allOwners[i]->prev = allOwners[(i - 1 + amountOfOwners) % amountOfOwners];
-    }
-
-    // Update the head of the circular linked list
-    ownerHead = allOwners[0];
 }
 
 
@@ -613,16 +623,8 @@ void addPokemonForMerge(PokemonNode *rootTwo, OwnerNode *ownerOne) {
 
 int main()
 {
-    int amountOfOwners = 0;
-    OwnerNode **allOwners = malloc(sizeof(OwnerNode));
-    if (!allOwners) {
-        printf("Memory allocation failed.\n");
-        exit(1);
-    }
-
-    *allOwners = NULL; // Initialize first pointer to NULL
-    mainMenu(allOwners, &amountOfOwners);
-    free(allOwners);
+    mainMenu();
+   // freeAllOwners();
     return 0;
 }
 
@@ -710,9 +712,6 @@ void removeOwner(OwnerNode ***allOwners, OwnerNode *toDelete, int ownerToRemove,
             exit(1);
         }
         *allOwners = temp;
-
-
-
 }
 
 void freeOwnerNode(OwnerNode *toDelete) {
@@ -752,17 +751,11 @@ void linkOwnerInCircularList(OwnerNode ***allOwners, OwnerNode *newOwner, int *c
         newOwner->prev = newOwner;
     }
     else {
-        /*
         // Link the new owner to the end of the list and maintain circular structure
         (*allOwners)[*currentAmountOfOwners - 1]->next = newOwner;
         (newOwner)->prev = (*allOwners)[*currentAmountOfOwners - 1];
         newOwner->next = (*allOwners)[0];
-        (*allOwners)[0]->prev = newOwner;*/
-        OwnerNode *tail = ownerHead->prev;
-        tail->next = newOwner;
-        newOwner->prev = tail;
-        newOwner->next = ownerHead;
-        ownerHead->prev = newOwner;
+        (*allOwners)[0]->prev = newOwner;
 
     }
     // Add the new owner to the array
