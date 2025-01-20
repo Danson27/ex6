@@ -330,16 +330,13 @@ void displayPokedexOptions (OwnerNode *owner)
 // --------------------------------------------------------------
 // Sub-menu for existing Pokedex
 // --------------------------------------------------------------
-void enterExistingPokedexMenu(OwnerNode*** allOwners, const int *currentAmountOfOwners)
-{
-
+void chooseOwnerForPokedexMenu(OwnerNode*** allOwners, const int *currentAmountOfOwners) {
     OwnerNode* currentOwner = NULL;
     printf("\nExisting Pokedexes:\n");
     for (int i = 0; i <= *currentAmountOfOwners-1 ; i++) {
         printf("%d. %s\n", i+1, (*allOwners)[i]->ownerName);
     }
     int choiceOfPokedex = readIntSafe("Choose a Pokedex by number: ");
-
 
     if (choiceOfPokedex <= 0) {
         currentOwner = (*allOwners)[0];
@@ -350,8 +347,12 @@ void enterExistingPokedexMenu(OwnerNode*** allOwners, const int *currentAmountOf
     else {
         currentOwner = (*allOwners)[choiceOfPokedex-1];
     }
-   // clearBuffer();
-  printf("\nEntering %s's Pokedex...\n", currentOwner->ownerName);
+    //  clearBuffer();
+    printf("\nEntering %s's Pokedex...\n", currentOwner->ownerName);
+    enterPokedexMenu(currentOwner);
+}
+
+void enterPokedexMenu(OwnerNode *currentOwner){
 
     int subChoice;
     do
@@ -365,6 +366,7 @@ void enterExistingPokedexMenu(OwnerNode*** allOwners, const int *currentAmountOf
         printf("6. Back to Main\n");
 
         subChoice = readIntSafe("Your choice: ");
+
 
         switch (subChoice)
         {
@@ -413,6 +415,7 @@ void enterExistingPokedexMenu(OwnerNode*** allOwners, const int *currentAmountOf
             break;
         default:
             printf("Invalid choice.\n");
+            enterPokedexMenu(currentOwner);
         }
     } while (subChoice != 6);
 }
@@ -452,7 +455,7 @@ void mainMenu()
                 printf("No existing Pokedexes to delete.\n");
                 break;
             }
-           enterExistingPokedexMenu(&allOwners, &amountOfOwners);
+           chooseOwnerForPokedexMenu(&allOwners, &amountOfOwners);
             break;
         case 3:
             deletePokedex(&allOwners, &amountOfOwners);
@@ -506,7 +509,7 @@ void mainMenu()
             break;
         case 7:
             //Cleanup All Owners at Program End
-                freeAllOwners(&allOwners, &amountOfOwners);
+              //  freeAllOwners(&allOwners, &amountOfOwners);
             printf("Goodbye!\n");
             break;
         default:
@@ -515,14 +518,15 @@ void mainMenu()
     } while (choice != 7);
 }
 
-
+/*
 void freeAllOwners(OwnerNode*** allOwners, int *amountOfOwners) {
     if (ownerHead == NULL) {
         return;
     }
-    OwnerNode *currentOwner = ownerHead->next;
-    while (currentOwner != ownerHead) {
-        OwnerNode* temp = currentOwner;
+    OwnerNode *currentOwner = ownerHead;
+    for (int i = 0; i < current)
+    while (currentOwner != NULL) {
+        OwnerNode* temp = currentOwner->next;
         currentOwner = currentOwner->next;
         freePokemonTree(temp->pokedexRoot);
         removeOwner(allOwners, temp, 1, amountOfOwners);
@@ -531,7 +535,7 @@ void freeAllOwners(OwnerNode*** allOwners, int *amountOfOwners) {
     removeOwner(allOwners, currentOwner, 0, amountOfOwners);
 
     ownerHead = NULL;
-}
+}*/
 
 
 void printOwnersCircular() {
