@@ -72,6 +72,8 @@ char* duplicateString(const char* str);
 char *readInput();
 // i added
 void clearBuffer();
+void addPokemonForMerge(PokemonNode *rootTwo, OwnerNode *ownerOne);
+int compareOwnersByName(const void *a, const void *b);
 
 /**
  * @brief Remove leading/trailing whitespace (including '\r').
@@ -137,7 +139,7 @@ OwnerNode *createOwner(char *ownerName, PokemonNode *starter);
  * @param node pointer to node
  * Why we made it: Avoid memory leaks for single nodes.
  */
-void freePokemonNode(PokemonNode *node);
+PokemonNode* freePokemonNode(PokemonNode* root, int choice);
 
 /**
  * @brief Recursively free a BST of PokemonNodes.
@@ -148,11 +150,12 @@ void freePokemonTree(PokemonNode *root);
 
 /**
  * @brief Free an OwnerNode (including name and entire Pokedex BST).
- * @param owner pointer to the owner
+ * @param toDelete pointer to the owner
  * Why we made it: Deleting an owner also frees their Pokedex & name.
  */
-void freeOwnerNode(OwnerNode *owner);
+void removeOwner(OwnerNode ***allOwners, OwnerNode *toDelete, int ownerToRemove, int *currentAmountOfOwners);
 
+void freeOwnerNode(OwnerNode *toDelete);
 /* ------------------------------------------------------------
    3) BST Insert, Search, Remove
    ------------------------------------------------------------ */
@@ -286,7 +289,7 @@ void collectAll(PokemonNode *root, NodeArray *na);
  * @return -1, 0, or +1
  * Why we made it: Sorting by name for alphabetical display.
  */
-int compareByNameNode(const void *a, const void *b);
+int comparePokemonByNameNode(const void *a, const void *b);
 
 /**
  * @brief BFS is nice, but alphabetical means we gather all nodes, sort by name, then print.
@@ -356,7 +359,6 @@ PokemonNode* addPokemon(PokemonNode* root, OwnerNode* owner, int id, int* added)
  */
 // code to get min in BFS to help remove Node with two children
 PokemonNode* findMinimum(PokemonNode* root);
-PokemonNode* freePokemon(PokemonNode* root, int choice);
 
 
 /* ------------------------------------------------------------
@@ -434,13 +436,12 @@ void openPokedexMenu(OwnerNode ***allOwners, int *currentAmountOfOwners);
  * @brief Delete an entire Pokedex (owner) from the list.
  * Why we made it: Let user pick which Pokedex to remove and free everything.
  */
-void deletePokedex(void);
-
+void deletePokedex(OwnerNode ***allOwners, int *currentAmountOfOwners);
 /**
  * @brief Merge the second owner's Pokedex into the first, then remove the second owner.
  * Why we made it: BFS copy demonstration plus removing an owner.
  */
-void mergePokedexMenu(void);
+void mergePokedexMenu(OwnerNode*** allOwners, OwnerNode* ownerOne, OwnerNode* ownerTwo, int* currentAmountOfOwners, int index);
 
 /* ------------------------------------------------------------
    11) Printing Owners in a Circle
@@ -450,8 +451,7 @@ void mergePokedexMenu(void);
  * @brief Print owners left or right from head, repeating as many times as user wants.
  * Why we made it: Demonstrates stepping through a circular list in a chosen direction.
  */
-void printOwnersCircular(void);
-
+void printOwnersCircular();
 /* ------------------------------------------------------------
    12) Cleanup All Owners at Program End
    ------------------------------------------------------------ */
@@ -460,8 +460,7 @@ void printOwnersCircular(void);
  * @brief Frees every remaining owner in the circular list, setting ownerHead = NULL.
  * Why we made it: Ensures a squeaky-clean exit with no leftover memory.
  */
-void freeAllOwners(void);
-
+void freeAllOwners(OwnerNode*** allOwners, int *amountOfOwners);
 /* ------------------------------------------------------------
    13) The Main Menu
    ------------------------------------------------------------ */
