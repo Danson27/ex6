@@ -439,7 +439,7 @@ void mainMenu()
         printf("Memory allocation failed.\n");
         exit(1);
     }
-    //ownerHead = *allOwners;
+    ownerHead = allOwners[0];
     int choice;
     do
     {
@@ -460,7 +460,7 @@ void mainMenu()
             break;
         case 2:
             if (amountOfOwners == 0) {
-                printf("No existing Pokedexes to delete.\n");
+                printf("No existing Pokedexes.\n");
                 break;
             }
            chooseOwnerForPokedexMenu(&allOwners, &amountOfOwners);
@@ -502,10 +502,11 @@ void mainMenu()
             break;
         case 5:
             if (amountOfOwners < 2) {
-                printf("Your choice: 0 or 1 owners only => no need to sort.\n");
+                printf("0 or 1 owners only => no need to sort.\n");
                 break;
             }
             qsort(allOwners, amountOfOwners, sizeof(OwnerNode*), compareOwnersByName);
+            updateCircularListAfterSort(allOwners, amountOfOwners);
             printf("Owners sorted by name.\n");
             break;
         case 6:
@@ -575,6 +576,21 @@ int compareOwnersByName(const void *a, const void *b) {
     const OwnerNode *one = *(const OwnerNode**)a;
     const OwnerNode *two = *(const OwnerNode**)b;
     return strcmp(one->ownerName, two->ownerName);
+}
+void updateCircularListAfterSort(OwnerNode **allOwners, int amountOfOwners) {
+    if (amountOfOwners == 0) {
+        ownerHead = NULL;
+        return;
+    }
+
+    // Update the circular linked list
+    for (int i = 0; i < amountOfOwners; i++) {
+        allOwners[i]->next = allOwners[(i + 1) % amountOfOwners];
+        allOwners[i]->prev = allOwners[(i - 1 + amountOfOwners) % amountOfOwners];
+    }
+
+    // Update the head of the circular linked list
+    ownerHead = allOwners[0];
 }
 
 
@@ -735,11 +751,17 @@ void linkOwnerInCircularList(OwnerNode ***allOwners, OwnerNode *newOwner, int *c
         newOwner->prev = newOwner;
     }
     else {
+        /*
         // Link the new owner to the end of the list and maintain circular structure
         (*allOwners)[*currentAmountOfOwners - 1]->next = newOwner;
         (newOwner)->prev = (*allOwners)[*currentAmountOfOwners - 1];
         newOwner->next = (*allOwners)[0];
-        (*allOwners)[0]->prev = newOwner;
+        (*allOwners)[0]->prev = newOwner;*/
+        OwnerNode *tail = ownerHead->prev;
+        tail->next = newOwner;
+        newOwner->prev = tail;
+        newOwner->next = ownerHead;
+        ownerHead->prev = newOwner;
 
     }
     // Add the new owner to the array
