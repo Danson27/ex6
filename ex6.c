@@ -526,25 +526,29 @@ void mainMenu()
     } while (choice != 7);
 }
 
-/*
 void freeAllOwners(OwnerNode*** allOwners, int *amountOfOwners) {
-    if (ownerHead == NULL) {
+    if (ownerHead == NULL || *amountOfOwners == 0) {
         return;
     }
-    OwnerNode *currentOwner = ownerHead;
-    for (int i = 0; i < current)
-    while (currentOwner != NULL) {
-        OwnerNode* temp = currentOwner->next;
-        currentOwner = currentOwner->next;
-        freePokemonTree(temp->pokedexRoot);
-        removeOwner(allOwners, temp, 1, amountOfOwners);
+    for (int i = 0; i < *amountOfOwners; i++) {
+        OwnerNode* currentOwner = (*allOwners)[i];
+
+        if (currentOwner->pokedexRoot != NULL) {
+            freePokemonTree(currentOwner->pokedexRoot);
+        }
+        // Free the owner's name
+        if (currentOwner->ownerName != NULL) {
+            free(currentOwner->ownerName);
+        }
+        free(currentOwner);
     }
-    freePokemonTree(currentOwner->pokedexRoot);
-    removeOwner(allOwners, currentOwner, 0, amountOfOwners);
+
+    //free the array of Owners
+    free(*allOwners);
+    *allOwners = NULL;
 
     ownerHead = NULL;
-}*/
-
+}
 
 void printOwnersCircular() {
     char input;
@@ -709,7 +713,7 @@ void freePokemonTree(PokemonNode *root) {
     // Recursively free the left and right subtrees
     freePokemonTree(root->left);
     freePokemonTree(root->right);
-    
+
     // Free the current node itself
     free (root);
 }
