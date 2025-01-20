@@ -434,12 +434,7 @@ void mainMenu()
 {
 
     int amountOfOwners = 0;
-    OwnerNode **allOwners = malloc(sizeof(OwnerNode));
-    if (!allOwners) {
-        printf("Memory allocation failed.\n");
-        exit(1);
-    }
-    //ownerHead = *allOwners;
+    OwnerNode **allOwners = NULL;
     int choice;
     do
     {
