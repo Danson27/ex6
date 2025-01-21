@@ -419,6 +419,7 @@ void enterPokedexMenu(OwnerNode *currentOwner){
             break;
         case 6:
             printf("Back to Main Menu.\n");
+            mainMenu();
             return;
         default:
             printf("Invalid choice.\n");
