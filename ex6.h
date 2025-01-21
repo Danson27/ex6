@@ -132,8 +132,7 @@ PokemonNode *createPokemonNode(const PokemonData *data);
  * @return newly allocated OwnerNode*
  * Why we made it: Each user is represented as an OwnerNode.
  */
-OwnerNode *createOwner(char *ownerName, PokemonNode *starter);
-
+void createOwner(OwnerNode *newOwner, const PokemonData *starterPokemon);
 /**
  * @brief Free one PokemonNode (including name).
  * @param node pointer to node
@@ -153,7 +152,7 @@ void freePokemonTree(PokemonNode *root);
  * @param toDelete pointer to the owner
  * Why we made it: Deleting an owner also frees their Pokedex & name.
  */
-void removeOwner(OwnerNode ***allOwners, OwnerNode *toDelete, int ownerToRemove, int *currentAmountOfOwners);
+void removeOwner(OwnerNode *toDelete);
 
 void freeOwnerNode(OwnerNode *toDelete);
 /* ------------------------------------------------------------
@@ -399,7 +398,10 @@ void swapOwnerData(OwnerNode *a, OwnerNode *b);
  * @param newOwner pointer to newly created OwnerNode
  * Why we made it: We need a standard approach to keep the list circular.
  */
-void linkOwnerInCircularList(OwnerNode ***allOwners, OwnerNode *newOwner, int *currentAmountOfOwners);
+void linkOwnerInCircularList(OwnerNode *newOwner);
+
+// Get the owner at a specific index in the circular list
+OwnerNode *getOwnerAtIndex(int index);
 
 /**
  * @brief Remove a specific OwnerNode from the circular list, possibly updating head.
@@ -425,24 +427,24 @@ void updateCircularListAfterSort(OwnerNode **allOwners, int amountOfOwners);
  * @brief Let user pick an existing Pokedex (owner) by number, then sub-menu.
  * Why we made it: This is the main interface for adding/fighting/evolving, etc.
  */
-void chooseOwnerForPokedexMenu(OwnerNode*** allOwners, const int *amountOfOwners);
-void enterPokedexMenu(OwnerNode*** allOwners, OwnerNode *currentOwner, int amountOfOwners);
+void enterPokedexMenu(OwnerNode *currentOwner);
+int countOwners();
 /**
  * @brief Creates a new Pokedex (prompt for name, check uniqueness, choose starter).
  * Why we made it: The main entry for building a brand-new Pokedex.
  */
-void openPokedexMenu(OwnerNode ***allOwners, int *currentAmountOfOwners);
+void openPokedexMenu();
 
 /**
  * @brief Delete an entire Pokedex (owner) from the list.
  * Why we made it: Let user pick which Pokedex to remove and free everything.
  */
-void deletePokedex(OwnerNode ***allOwners, int *currentAmountOfOwners);
+void deletePokedex();
 /**
  * @brief Merge the second owner's Pokedex into the first, then remove the second owner.
  * Why we made it: BFS copy demonstration plus removing an owner.
  */
-void mergePokedexMenu(OwnerNode*** allOwners, OwnerNode* ownerOne, OwnerNode* ownerTwo, int* currentAmountOfOwners, int index);
+void mergePokedexMenu(OwnerNode* ownerOne, OwnerNode* ownerTwo);
 
 /* ------------------------------------------------------------
    11) Printing Owners in a Circle
@@ -461,7 +463,7 @@ void printOwnersCircular();
  * @brief Frees every remaining owner in the circular list, setting ownerHead = NULL.
  * Why we made it: Ensures a squeaky-clean exit with no leftover memory.
  */
-void freeAllOwners(OwnerNode** allOwners, const int *amountOfOwners);
+void freeAllOwners();
 /* ------------------------------------------------------------
    13) The Main Menu
    ------------------------------------------------------------ */
@@ -470,7 +472,7 @@ void freeAllOwners(OwnerNode** allOwners, const int *amountOfOwners);
  * @brief The main driver loop for the program (new pokedex, merge, fight, etc.).
  * Why we made it: Our top-level UI that keeps the user engaged until they exit.
  */
-void mainMenu(OwnerNode** allOwners, int *amountOfOwners);
+void mainMenu();
 // Array of Pokemon data
 static const PokemonData pokedex[] = {
     {1, "Bulbasaur", GRASS, 45, 49, CAN_EVOLVE},
