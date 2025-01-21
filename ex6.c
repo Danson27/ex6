@@ -999,6 +999,8 @@ void mainMenu()
             }
             printf("=== Merge Pokedexes ===\n");
             mergePokedexMenu(ownerOne, ownerTwo);
+            free(ownerNameOne);
+            free(ownerNameTwo);
             break;
         case 5:
             int numOwners = countOwners();
