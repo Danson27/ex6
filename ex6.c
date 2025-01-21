@@ -330,10 +330,10 @@ void displayPokedexOptions (OwnerNode *owner)
 // --------------------------------------------------------------
 // Sub-menu for existing Pokedex
 // --------------------------------------------------------------
-void chooseOwnerForPokedexMenu(OwnerNode*** allOwners, const int *currentAmountOfOwners) {
+void chooseOwnerForPokedexMenu(OwnerNode*** allOwners, const int *amountOfOwners) {
     OwnerNode* currentOwner = NULL;
     printf("\nExisting Pokedexes:\n");
-    for (int i = 0; i <= *currentAmountOfOwners-1 ; i++) {
+    for (int i = 0; i <= *amountOfOwners-1 ; i++) {
         printf("%d. %s\n", i+1, (*allOwners)[i]->ownerName);
     }
     int choiceOfPokedex = readIntSafe("Choose a Pokedex by number: ");
@@ -341,18 +341,18 @@ void chooseOwnerForPokedexMenu(OwnerNode*** allOwners, const int *currentAmountO
     if (choiceOfPokedex <= 0) {
         currentOwner = (*allOwners)[0];
     }
-    else if (choiceOfPokedex >= *currentAmountOfOwners) {
-        currentOwner = (*allOwners)[*currentAmountOfOwners - 1];
+    else if (choiceOfPokedex >= *amountOfOwners) {
+        currentOwner = (*allOwners)[*amountOfOwners - 1];
     }
     else {
         currentOwner = (*allOwners)[choiceOfPokedex-1];
     }
     //  clearBuffer();
     printf("\nEntering %s's Pokedex...\n", currentOwner->ownerName);
-    enterPokedexMenu(currentOwner);
+    enterPokedexMenu(allOwners, currentOwner, *amountOfOwners);
 }
 
-void enterPokedexMenu(OwnerNode *currentOwner){
+void enterPokedexMenu(OwnerNode*** allOwners, OwnerNode *currentOwner, int amountOfOwners){
 
     int subChoice;
     do
@@ -419,11 +419,11 @@ void enterPokedexMenu(OwnerNode *currentOwner){
             break;
         case 6:
             printf("Back to Main Menu.\n");
-            mainMenu();
+            mainMenu(*allOwners, &amountOfOwners);
             return;
         default:
             printf("Invalid choice.\n");
-            enterPokedexMenu(currentOwner);
+            enterPokedexMenu(allOwners, currentOwner, amountOfOwners);
         }
     } while (subChoice != 6);
 }
@@ -431,11 +431,10 @@ void enterPokedexMenu(OwnerNode *currentOwner){
 // --------------------------------------------------------------
 // Main Menu
 // --------------------------------------------------------------
-void mainMenu()
+void mainMenu(OwnerNode** allOwners, int *amountOfOwners)
 {
 
-    int amountOfOwners = 0;
-    OwnerNode **allOwners = NULL;
+
     int choice;
     do
     {
@@ -452,22 +451,22 @@ void mainMenu()
         switch (choice)
         {
         case 1:
-           openPokedexMenu(&allOwners, &amountOfOwners);
+            openPokedexMenu(&allOwners, amountOfOwners);
             break;
         case 2:
             if (amountOfOwners == 0) {
                 printf("No existing Pokedexes.\n");
                 break;
             }
-           chooseOwnerForPokedexMenu(&allOwners, &amountOfOwners);
+            chooseOwnerForPokedexMenu(&allOwners, amountOfOwners);
             break;
         case 3:
-            deletePokedex(&allOwners, &amountOfOwners);
+            deletePokedex(&allOwners, amountOfOwners);
             break;
         case 4:
             OwnerNode *ownerOne = NULL;
             OwnerNode *ownerTwo = NULL;
-            if (amountOfOwners < 2) {
+            if (*amountOfOwners < 2) {
                 printf("Not enough owners to merge.\n");
                 break;
             }
@@ -484,7 +483,7 @@ void mainMenu()
                 exit(1);
             }
             int index;
-            for (int i = 0; i < amountOfOwners; i++) {
+            for (int i = 0; i < *amountOfOwners; i++) {
                 if (strcmp(ownerNameOne, allOwners[i]->ownerName) == 0) {
                     ownerOne = allOwners[i];
                 }
@@ -494,15 +493,15 @@ void mainMenu()
                 }
             }
             printf("=== Merge Pokedexes ===\n");
-            mergePokedexMenu(&allOwners, ownerOne, ownerTwo, &amountOfOwners, index);
+            mergePokedexMenu(&allOwners, ownerOne, ownerTwo, amountOfOwners, index);
             break;
         case 5:
-            if (amountOfOwners < 2) {
+            if (*amountOfOwners < 2) {
                 printf("0 or 1 owners only => no need to sort.\n");
                 break;
             }
-            qsort(allOwners, amountOfOwners, sizeof(OwnerNode*), compareOwnersByName);
-            updateCircularListAfterSort(allOwners, amountOfOwners);
+            qsort(allOwners, *amountOfOwners, sizeof(OwnerNode*), compareOwnersByName);
+            updateCircularListAfterSort(allOwners, *amountOfOwners);
 
             printf("Owners sorted by name.\n");
             break;
@@ -515,7 +514,7 @@ void mainMenu()
             break;
         case 7:
             //Cleanup All Owners at Program End
-              freeAllOwners(allOwners, &amountOfOwners);
+              freeAllOwners(allOwners, amountOfOwners);
             printf("Goodbye!\n");
             break;
         default:
@@ -620,7 +619,14 @@ void addPokemonForMerge(PokemonNode *rootTwo, OwnerNode *ownerOne) {
 
 int main()
 {
-    mainMenu();
+    OwnerNode **allOwners = malloc(sizeof(OwnerNode*));
+    if (allOwners == NULL) {
+        printf("Memory allocation error.\n");
+        exit (1);
+    }
+    int amountOfOwners = 0;
+
+    mainMenu(allOwners, &amountOfOwners);
    // freeAllOwners();
     return 0;
 }
