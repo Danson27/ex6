@@ -220,9 +220,11 @@ void openPokedexMenu(){
     newOwner->ownerName = ownerName;
     newOwner->pokedexRoot = NULL;
 
-    if (findOwnerByName(newOwner->ownerName)) {
+    if (findOwnerByName(ownerName)) {
         printf("Owner '%s' already exists. Not creating a new Pokedex.\n", newOwner->ownerName);
         freeOwnerNode(newOwner);
+        newOwner = NULL;
+
     } else {
         //clearBuffer();
         printf("Choose starter\n");
@@ -253,7 +255,6 @@ void openPokedexMenu(){
         }
 
         createOwner(newOwner, starterPokemon);
-        free(ownerName);
     }
 
 }
@@ -401,18 +402,19 @@ void updateCircularListAfterSort(OwnerNode **sortedOwners, int numOwners) {
 }
 
 // Find an owner by name
-OwnerNode *findOwnerByName(const char *name) {
-    if (!ownerHead) return NULL;
+int findOwnerByName(const char *name) {
+    if (!ownerHead)
+        return 0;
 
     OwnerNode *current = ownerHead;
     do {
         if (strcmp(current->ownerName, name) == 0) {
-            return current;
+            return 1;
         }
         current = current->next;
     } while (current != ownerHead);
 
-    return NULL;
+    return 0;
 }
 void printOwnersCircular() {
 
