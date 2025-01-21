@@ -903,7 +903,6 @@ void enterPokedexMenu(OwnerNode *currentOwner){
             return;
         default:
             printf("Invalid choice.\n");
-            enterPokedexMenu(currentOwner);
         }
     } while (subChoice != 6);
 }
