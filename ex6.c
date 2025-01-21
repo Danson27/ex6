@@ -346,6 +346,7 @@ void displayPokedexOptions (OwnerNode *owner)
         collectAll(owner->pokedexRoot, na);
         displayAlphabetical(na);
         free(na->nodes);
+        free(na);
         break;
     default:
         printf("Invalid choice.\n");
