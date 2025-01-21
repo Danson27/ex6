@@ -227,7 +227,7 @@ void openPokedexMenu(){
 
     } else {
         //clearBuffer();
-        printf("Choose starter\n");
+        printf("Choose Starter:\n");
         printf("1. Bulbasaur\n"
                      "2. Charmander\n"
                      "3. Squirtle\n");
@@ -323,7 +323,6 @@ void displayPokedexOptions (OwnerNode *owner)
     switch (choice)
     {
     case 1:
-        printPokemonNode(owner->pokedexRoot);
         BFSGeneric(owner->pokedexRoot, printPokemonNode);
         break;
     case 2:
@@ -648,20 +647,76 @@ void postOrderGeneric(PokemonNode *root, VisitNodeFunc visit){
     postOrderGeneric(root->right, visit);
     visit(root);
 }
+
+Queue *createQueue() {
+    Queue *queue = (Queue *)malloc(sizeof(Queue));
+    queue->front = queue->rear = NULL;
+    return queue;
+}
+// Function to add a node to the queue (enqueue)
+void enqueue(Queue *queue, PokemonNode *node) {
+    QueueNode *newNode = (QueueNode *)malloc(sizeof(QueueNode));
+    newNode->node = node;
+    newNode->next = NULL;
+
+    if (queue->rear == NULL) { // If the queue is empty
+        queue->front = queue->rear = newNode;
+        return;
+    }
+    queue->rear->next = newNode;
+    queue->rear = newNode;
+}
+// Function to remove a node from the queue (dequeue)
+PokemonNode *dequeue(Queue *queue) {
+    if (queue->front == NULL) {
+        return NULL; // Queue is empty
+    }
+
+    QueueNode *temp = queue->front;
+    PokemonNode *node = temp->node;
+    queue->front = queue->front->next;
+
+    if (queue->front == NULL) { // If the queue becomes empty
+        queue->rear = NULL;
+    }
+
+    free(temp);
+    return node;
+}
+// Function to check if the queue is empty
+int isQueueEmpty(Queue *queue) {
+    return queue->front == NULL;
+}
+// Function to free the queue
+void freeQueue(Queue *queue) {
+    while (!isQueueEmpty(queue)) {
+        dequeue(queue);
+    }
+    free(queue);
+}
 void BFSGeneric(PokemonNode *root, VisitNodeFunc visit) {
     if (root == NULL) {
         return;
     }
-    if (root->left != NULL) {
-        visit(root->left);
-    }
-    if (root->right != NULL) {
-        visit(root->right);
-    }
-    BFSGeneric(root->left, visit);
-    BFSGeneric(root->right, visit);
-}
 
+    Queue *queue = createQueue(); // Create a queue
+    enqueue(queue, root);         // Enqueue the root node
+
+    while (!isQueueEmpty(queue)) {
+        PokemonNode *current = dequeue(queue); // Dequeue the front node
+        visit(current);                        // Visit the current node
+
+        // Enqueue the left and right children
+        if (current->left != NULL) {
+            enqueue(queue, current->left);
+        }
+        if (current->right != NULL) {
+            enqueue(queue, current->right);
+        }
+    }
+
+    freeQueue(queue); // Free the queue after BFS
+}
 int sizeOfBFSTree(PokemonNode *root) {
     if (root == NULL) {
         return 0;
@@ -866,7 +921,7 @@ void enterPokedexMenu(OwnerNode *currentOwner){
                 printf("No Pokemon to release.\n");
                 break;
             }
-            int choice = readIntSafe("Enter Pokemon ID to release:");
+            int choice = readIntSafe("Enter Pokemon ID to release: ");
             if (!isPokemon(currentOwner->pokedexRoot, currentOwner, choice)) {
                 printf("No Pokemon with ID %d found.\n", choice);
                 break;
@@ -972,6 +1027,7 @@ void mainMenu()
                 printf("Not enough owners to merge.\n");
                 break;
             }
+            printf("\n=== Merge Pokedexes ===\n");
             printf("Enter name of first owner: ");
             char* ownerNameOne = NULL;
             ownerNameOne = getDynamicInput();
@@ -1000,7 +1056,6 @@ void mainMenu()
                     i++;
                 } while (current != ownerHead);
             }
-            printf("=== Merge Pokedexes ===\n");
             mergePokedexMenu(ownerOne, ownerTwo);
             free(ownerNameOne);
             free(ownerNameTwo);
