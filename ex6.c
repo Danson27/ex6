@@ -253,6 +253,7 @@ void openPokedexMenu(){
         }
 
         createOwner(newOwner, starterPokemon);
+        free(ownerName);
     }
 
 }
