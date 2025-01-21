@@ -416,7 +416,7 @@ void removeOwnerFromCircularList(OwnerNode *target);
  * @return pointer to the matching OwnerNode or NULL
  * Why we made it: We often need to locate an owner quickly.
  */
-OwnerNode *findOwnerByName(const char *name);
+int findOwnerByName(const char *name);
 void updateCircularListAfterSort(OwnerNode **allOwners, int amountOfOwners);
 
 /* ------------------------------------------------------------
