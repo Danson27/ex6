@@ -62,10 +62,26 @@ typedef struct OwnerNode
 // Global head pointer for the linked list of owners
 OwnerNode *ownerHead = NULL;
 
+
+// queue nodes for the queue
+typedef struct QueueNode {
+   PokemonNode *node;
+   struct QueueNode *next;
+} QueueNode;
+
+// queue structs
+typedef struct Queue {
+   QueueNode *front;
+   QueueNode *rear;
+} Queue;
 /* ------------------------------------------------------------
    1) Safe Input + Utility
    ------------------------------------------------------------ */
-
+Queue *createQueue();
+void enqueue(Queue *queue, PokemonNode *node);
+PokemonNode *dequeue(Queue *queue);
+int isQueueEmpty(Queue *queue);
+void freeQueue(Queue *queue);
 // i added
 char* duplicateString(const char* str);
 // i added
