@@ -896,7 +896,6 @@ void enterPokedexMenu(OwnerNode *currentOwner){
             break;
         case 6:
             printf("Back to Main Menu.\n");
-            mainMenu();
             return;
         default:
             printf("Invalid choice.\n");
@@ -1035,7 +1034,7 @@ void mainMenu()
             //Cleanup All Owners at Program End
               freeAllOwners();
             printf("Goodbye!\n");
-            break;
+            return;
         default:
             printf("Invalid.\n");
         }
