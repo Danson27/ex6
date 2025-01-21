@@ -1040,7 +1040,6 @@ void mainMenu()
             if (ownerNameTwo == NULL) {
                 exit(1);
             }
-            printf("ownerOne name is %s, ownerTwo name is %s\n", ownerNameOne, ownerNameTwo);
             int i = 0;
             OwnerNode* current = ownerHead;
 
